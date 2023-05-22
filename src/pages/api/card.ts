@@ -22,13 +22,9 @@ export default function handler(
 ) {
   if (req.method === "POST") {
     const { card, cvv, date } = req.body;
-    console.log(card);
-    console.log(cvv);
-    console.log(date);
-    console.log(new Date() < new Date(date));
 
     if (new Date() < new Date(date) === false) {
-      res
+      return res
         .status(406)
         .json({ failed: "The card expiration date is before today" });
     }
@@ -38,27 +34,44 @@ export default function handler(
       (String(card)[1] == "4" || String(card)[1] == "7")
     ) {
       if (String(cvv).length != 4) {
-        res.status(406).json({ failed: "The card CVV seems to be incorrect" });
+        return res
+          .status(406)
+          .json({ failed: "The card CVV seems to be incorrect" });
       }
     } else {
       if (String(cvv).length != 3) {
-        res.status(406).json({ failed: "The card CVV seems to be incorrect" });
+        return res
+          .status(406)
+          .json({ failed: "The card CVV seems to be incorrect" });
       }
     }
 
     if (String(card).length < 16 || String(card).length > 19) {
-      res.status(406).json({ failed: "The card number length is incorrect" });
+      return res
+        .status(406)
+        .json({ failed: "The card number length is incorrect" });
     }
 
-    console.log(String(card).length);
+    if (!Luhns(card)) {
+      return res
+        .status(406)
+        .json({ failed: "The card number is incorrect - Luhms." });
+    }
 
-    Luhns(card);
-
-    res.status(200).json({ success: "The card seems to be correct!" });
+    return res.status(200).json({ success: "The card seems to be correct!" });
   }
 }
 
-function Luhns(card: Number) {
-  const payload = String(card).slice(1, -1);
-  const key = String(card)[String(card).length - 1];
+function Luhns(num: Number) {
+  let arr = (num + "")
+    .split("")
+    .reverse()
+    .map((x) => parseInt(x));
+  let lastDigit = arr.splice(0, 1)[0];
+  let sum = arr.reduce(
+    (acc, val, i) => (i % 2 !== 0 ? acc + val : acc + ((val * 2) % 9) || 9),
+    0
+  );
+  sum += lastDigit;
+  return sum % 10 === 0;
 }

@@ -5,6 +5,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import isDateBeforeToday from "./api/helpers/isBeforeToday";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +31,6 @@ export default function Home() {
       })
       .then((res) => {
         // If the request is completed correctly (status 200), Fire Sweet Alert to show me a success modal.
-        console.log(res?.data?.success);
         Swal.fire({
           title: "Success!",
           text: res?.data?.success,
@@ -55,6 +55,9 @@ export default function Home() {
     <main
       className={`font-inter flex justify-center items-center bg-gray-600 h-screen ${inter.className}`}
     >
+      <Head>
+        <title>Card Validator | Fernando Montano</title>
+      </Head>
       <article className="max-w-[1300px] mx-auto">
         <section>
           {/* Form section */}
@@ -62,58 +65,83 @@ export default function Home() {
             onSubmit={handleSubmit(onSubmit)}
             className="grid grid-cols-2 gap-5"
           >
-            <input
-              type="text"
-              placeholder="Name"
-              className={`rounded-xl px-2 py-5 text-gray-500 ${
-                errors?.name?.type == "required"
-                  ? "border border-red-500 hover:border-red-500 outline-none"
-                  : "border border-black hover:border-black outline-none"
-              }`}
-              {...register("name", { required: true })}
-            />
-            <input
-              type="text"
-              placeholder="Lastname"
-              className={`rounded-xl px-2 py-5 text-gray-500 ${
-                errors?.lastname?.type == "required"
-                  ? "border border-red-500 hover:border-red-500 outline-none"
-                  : "border border-black hover:border-black outline-none"
-              }`}
-              {...register("lastname", { required: true })}
-            />
+            <div className="flex flex-col">
+              <label className="font-bold" htmlFor="name">
+                Name
+              </label>
+              <input
+                type="text"
+                placeholder="Name"
+                className={`rounded-xl px-2 py-5 text-gray-500 ${
+                  errors?.name?.type == "required"
+                    ? "border border-red-500 hover:border-red-500 outline-none"
+                    : "border border-black hover:border-black outline-none"
+                }`}
+                {...register("name", { required: true })}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="font-bold" htmlFor="">
+                Lastname
+              </label>
+              <input
+                type="text"
+                placeholder="Lastname"
+                className={`rounded-xl px-2 py-5 text-gray-500 ${
+                  errors?.lastname?.type == "required"
+                    ? "border border-red-500 hover:border-red-500 outline-none"
+                    : "border border-black hover:border-black outline-none"
+                }`}
+                {...register("lastname", { required: true })}
+              />
+            </div>
             {/* Validation won't be made in the Frontend 
             as the whole purpose of the practice is to valide it via backend. */}
-            <input
-              type="number"
-              placeholder="Card number"
-              className={`rounded-xl px-2 py-5 text-gray-500 col-span-2 ${
-                errors?.cardNumber?.type == "required"
-                  ? "border border-red-500 hover:border-red-500 outline-none"
-                  : "border border-black hover:border-black outline-none"
-              }`}
-              {...register("cardNumber", { required: true })}
-            />
-            <input
-              type="date"
-              placeholder="Expiration Date"
-              className={`rounded-xl px-2 py-5 text-gray-500 ${
-                errors?.date?.type == "required"
-                  ? "border border-red-500 hover:border-red-500 outline-none"
-                  : "border border-black hover:border-black outline-none"
-              }`}
-              {...register("date", { required: true })}
-            />
-            <input
-              type="number"
-              placeholder="CVV"
-              className={`rounded-xl px-2 py-5 text-gray-500 ${
-                errors?.cvv?.type == "required"
-                  ? "border border-red-500 hover:border-red-500 outline-none"
-                  : "border border-black hover:border-black outline-none"
-              }`}
-              {...register("cvv", { required: true })}
-            />
+            <div className="flex flex-col col-span-2">
+              <label className="font-bold" htmlFor="">
+                Card number
+              </label>
+              <input
+                type="number"
+                placeholder="Card number"
+                className={`rounded-xl px-2 py-5 text-gray-500 col-span-2 ${
+                  errors?.cardNumber?.type == "required"
+                    ? "border border-red-500 hover:border-red-500 outline-none"
+                    : "border border-black hover:border-black outline-none"
+                }`}
+                {...register("cardNumber", { required: true })}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="font-bold" htmlFor="">
+                Expiration date
+              </label>
+              <input
+                type="date"
+                placeholder="Expiration Date"
+                className={`rounded-xl px-2 py-5 text-gray-500 ${
+                  errors?.date?.type == "required"
+                    ? "border border-red-500 hover:border-red-500 outline-none"
+                    : "border border-black hover:border-black outline-none"
+                }`}
+                {...register("date", { required: true })}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="font-bold" htmlFor="">
+                CVV
+              </label>
+              <input
+                type="number"
+                placeholder="CVV"
+                className={`rounded-xl px-2 py-5 text-gray-500 ${
+                  errors?.cvv?.type == "required"
+                    ? "border border-red-500 hover:border-red-500 outline-none"
+                    : "border border-black hover:border-black outline-none"
+                }`}
+                {...register("cvv", { required: true })}
+              />
+            </div>
             {/* Submit button which first validates and then sends the request */}
             <button
               type="submit"
