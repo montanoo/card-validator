@@ -7,3 +7,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 - Open your terminal and run `npm install`
 - After that, run `npm run dev`
 - Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Deploy
+
+- To check the live version of this project, go to: https://card-validator-git-main-fernandomontano.vercel.app/
