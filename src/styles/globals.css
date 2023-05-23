@@ -17,11 +17,8 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: #aaa;
+  opacity: 0.8;
+  background-image: radial-gradient(#a2ffee 0.5px, #aaa 0.5px);
+  background-size: 10px 10px;
 }

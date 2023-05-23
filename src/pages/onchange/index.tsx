@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -19,7 +19,10 @@ export default function Home() {
   } = useForm({ mode: "onChange" });
 
   // Useful for finding the response error and highlighting the input that contains the error!
-  const [failedInput, setFailedInput] = useState();
+  const [failedInput, setFailedInput] = useState<string[]>([]);
+  const [cardNumber, setCardNumber] = useState();
+  const [cvv, setCVV] = useState();
+  const [date, setDate] = useState();
 
   /* onSubmit function that will only be triggered 
   once the form's validations (required) are correct.
@@ -33,36 +36,84 @@ export default function Home() {
   Last problem described could be fixed by creating endpoints to different inputs 
   e.g (one input for the card number, one for the cvv, one for expiration)
   */
-  const onSubmit = (): any => {
-    const values = getValues(); // Getting the values from the React Hook Form
-    axios // Axios post request to my custom endpoint /api/card in which I send the card information.
-      .post("/api/card", {
-        card: values.cardNumber,
-        cvv: values.cvv,
-        date: new Date(values.date),
-      })
-      .then((res) => {
-        setFailedInput(undefined);
-        // If the request is completed correctly (status 200), Fire Sweet Alert to show me a success modal.
-        Swal.fire({
-          title: "Success!",
-          text: res?.data?.success,
-          icon: "success",
-          confirmButtonText: "Cool",
+  const onSubmit = (): any => {};
+
+  useEffect(() => {
+    // Creating a debounce to fetch every time the user presses a key (with a delay of 500ms)
+    const data = setTimeout(() => {
+      // Making the request to the custom endpoint for checking card numbers
+      
+      // This structure is general boilerplate for following useEffect.
+      axios
+        .post(`/api/card-number`, {
+          card: cardNumber,
+        })
+        .then((res) => {
+          failedInput.includes("CardNumber")
+            ? setFailedInput((prev) => {
+                return prev.filter((val) => val != "CardNumber");
+              })
+            : "";
+        })
+        .catch((err) => {
+          if (failedInput.includes("CardNumber")) return;
+          setFailedInput((prev) => {
+            return [...prev, "CardNumber"];
+          });
         });
-      })
-      // If the request is completed correctly (status 406), Fire Sweet Alert to show me an error modal.
-      .catch((err) => {
-        // Setting the input that contains the error for then handling the red border ❌
-        setFailedInput(err.response.data.wrongInput);
-        Swal.fire({
-          title: "Error!",
-          text: err?.response?.data?.failed,
-          icon: "error",
-          confirmButtonText: "Cool",
+    }, 500);
+
+    return () => clearTimeout(data);
+  }, [cardNumber, failedInput]);
+
+  useEffect(() => {
+    const data = setTimeout(() => {
+      axios
+        .post(`/api/card-cvv`, {
+          card: cardNumber,
+          cvv: cvv,
+        })
+        .then((res) => {
+          failedInput.includes("CVV")
+            ? setFailedInput((prev) => {
+                return prev.filter((val) => val != "CVV");
+              })
+            : "";
+        })
+        .catch((err) => {
+          if (failedInput.includes("CVV")) return;
+          setFailedInput((prev) => {
+            return [...prev, "CVV"];
+          });
         });
-      });
-  };
+    }, 500);
+
+    return () => clearTimeout(data);
+  }, [cvv, failedInput, cardNumber]);
+
+  useEffect(() => {
+    const data = setTimeout(() => {
+      axios
+        .post(`/api/card-date`, {
+          date: date,
+        })
+        .then((res) => {
+          failedInput.includes("Expiration")
+            ? setFailedInput((prev) => {
+                return prev.filter((val) => val != "Expiration");
+              })
+            : "";
+        })
+        .catch((err) => {
+          if (failedInput.includes("Expiration")) return;
+          setFailedInput((prev) => {
+            return [...prev, "Expiration"];
+          });
+        });
+    }, 500);
+
+    return () => clearTimeout(data);
+  }, [date, failedInput]);
 
   // JSX!
   return (
@@ -120,11 +171,16 @@ export default function Home() {
                 placeholder="Card number"
                 className={`rounded-lg border-dashed px-2 py-5 text-black col-span-2 ${
                   errors?.cardNumber?.type == "required" ||
-                  failedInput == "CardNumber"
+                  failedInput.includes("CardNumber")
                     ? "border-2 border-red-500 hover:border-red-500 outline-none"
                     : "border-2 border-black hover:border-black outline-none"
                 }`}
-                {...register("cardNumber", { required: true })}
+                {...register("cardNumber", {
+                  required: true,
+                  onChange: (e) => {
+                    setCardNumber(e.target.value);
+                  },
+                })}
               />
             </div>
             <div className="flex flex-col">
@@ -136,11 +192,16 @@ export default function Home() {
                 placeholder="Expiration Date"
                 className={`rounded-lg border-dashed px-2 py-5 text-black ${
                   errors?.date?.type == "required" ||
-                  failedInput == "Expiration"
+                  failedInput.includes("Expiration")
                     ? "border-2 border-red-500 hover:border-red-500 outline-none"
                     : "border-2 border-black hover:border-black outline-none"
                 }`}
-                {...register("date", { required: true })}
+                {...register("date", {
+                  required: true,
+                  onChange: (e) => {
+                    setDate(e.target.value);
+                  },
+                })}
               />
             </div>
             <div className="flex flex-col">
@@ -151,11 +212,16 @@ export default function Home() {
                 type="number"
                 placeholder="CVV"
                 className={`rounded-lg border-dashed px-2 py-5 text-black ${
-                  errors?.cvv?.type == "required" || failedInput == "CVV"
+                  errors?.cvv?.type == "required" || failedInput.includes("CVV")
                     ? "border-2 border-red-500 hover:border-red-500 outline-none"
                     : "border-2 border-black hover:border-black outline-none"
                 }`}
-                {...register("cvv", { required: true })}
+                {...register("cvv", {
+                  required: true,
+                  onChange: (e) => {
+                    setCVV(e.target.value);
+                  },
+                })}
               />
             </div>
             {/* Submit button which first validates and then sends the request */}
@@ -163,14 +229,26 @@ export default function Home() {
               type="submit"
               className="w-full bg-black font-bold rounded-lg py-5 text-white col-span-2"
             >
-              Send data
+              Check Card
             </button>
+            <div>
+              <div className="flex flex-col font-bold gap-2 justify-center w-full">
+                Errors:
+                {failedInput.map((err, key) => {
+                  return (
+                    <div key={key} className="h-5 font-bold text-red-600">
+                      {err}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </form>
           <Link
-            href="/onchange"
+            href="/"
             className="flex mt-4 cursor-pointer justify-center underline font-bold bg-white px-5 py-2 rounded-xl"
           >
-            <div>Check on change</div>
+            <div>Check on submit</div>
           </Link>
         </section>
       </article>
