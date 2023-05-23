@@ -1,10 +1,7 @@
-import Image from "next/image";
 import { Inter } from "next/font/google";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { useEffect } from "react";
 import Swal from "sweetalert2";
-import isDateBeforeToday from "./api/helpers/isBeforeToday";
 import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -53,7 +50,7 @@ export default function Home() {
   // JSX!
   return (
     <main
-      className={`font-inter flex justify-center items-center bg-gray-600 h-screen ${inter.className}`}
+      className={`font-inter flex justify-center items-center bg-gray-800 h-screen ${inter.className}`}
     >
       <Head>
         <title>Card Validator | Fernando Montano</title>
@@ -72,7 +69,7 @@ export default function Home() {
               <input
                 type="text"
                 placeholder="Name"
-                className={`rounded-xl px-2 py-5 text-gray-500 ${
+                className={`rounded-lg border-dashed px-2 py-5 text-gray-500 ${
                   errors?.name?.type == "required"
                     ? "border border-red-500 hover:border-red-500 outline-none"
                     : "border border-black hover:border-black outline-none"
@@ -87,7 +84,7 @@ export default function Home() {
               <input
                 type="text"
                 placeholder="Lastname"
-                className={`rounded-xl px-2 py-5 text-gray-500 ${
+                className={`rounded-lg border-dashed px-2 py-5 text-gray-500 ${
                   errors?.lastname?.type == "required"
                     ? "border border-red-500 hover:border-red-500 outline-none"
                     : "border border-black hover:border-black outline-none"
@@ -104,7 +101,7 @@ export default function Home() {
               <input
                 type="number"
                 placeholder="Card number"
-                className={`rounded-xl px-2 py-5 text-gray-500 col-span-2 ${
+                className={`rounded-lg border-dashed px-2 py-5 text-gray-500 col-span-2 ${
                   errors?.cardNumber?.type == "required"
                     ? "border border-red-500 hover:border-red-500 outline-none"
                     : "border border-black hover:border-black outline-none"
@@ -119,7 +116,7 @@ export default function Home() {
               <input
                 type="date"
                 placeholder="Expiration Date"
-                className={`rounded-xl px-2 py-5 text-gray-500 ${
+                className={`rounded-lg border-dashed px-2 py-5 text-gray-500 ${
                   errors?.date?.type == "required"
                     ? "border border-red-500 hover:border-red-500 outline-none"
                     : "border border-black hover:border-black outline-none"
@@ -134,7 +131,7 @@ export default function Home() {
               <input
                 type="number"
                 placeholder="CVV"
-                className={`rounded-xl px-2 py-5 text-gray-500 ${
+                className={`rounded-lg border-dashed px-2 py-5 text-gray-500 ${
                   errors?.cvv?.type == "required"
                     ? "border border-red-500 hover:border-red-500 outline-none"
                     : "border border-black hover:border-black outline-none"
@@ -145,7 +142,7 @@ export default function Home() {
             {/* Submit button which first validates and then sends the request */}
             <button
               type="submit"
-              className="w-full bg-black font-bold rounded-xl py-5 text-white col-span-2"
+              className="w-full bg-black font-bold rounded-lg py-5 text-white col-span-2"
             >
               Send data
             </button>
