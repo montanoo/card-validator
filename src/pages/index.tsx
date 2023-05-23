@@ -37,7 +37,6 @@ export default function Home() {
       })
       // If the request is completed correctly (status 406), Fire Sweet Alert to show me an error modal.
       .catch((err) => {
-        console.log(err?.response?.data);
         Swal.fire({
           title: "Error!",
           text: err?.response?.data?.failed,
